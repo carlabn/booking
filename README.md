@@ -1,6 +1,6 @@
 # Instructions
 A React Project to manage Places to book, and make some Bookings.
-There is still lots to improve though.
+To change your firebase database or whatever you are using, go to src/lib/api.js and change the value of FIREBASE_DOMAIN for yours.
 
 First, if you are not loged in, it will redirect you to /login.
 
@@ -31,3 +31,5 @@ You can Log In with *admin@admin.com* and more than 6 chars password and you can
 ### To do's
 - Able to delete bookings and places.
 - Double check all the validations because the error modal has broken with the changes.
+
+There is still lots to improve though!!!🚀🚀🚀
