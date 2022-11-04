@@ -1,20 +1,37 @@
-.booking {
-  margin: 1rem;
+.item {
+  margin: 1rem 0;
   padding: 1rem;
-  background-color: #230052;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
-  border-radius: 12px;
-  text-align: center;
-  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  background-color: #c2e7f0;
 }
 
-.booking h2 {
-  font-size: 2rem;
-  color: #f7e702;
+.item:last-of-type {
+  border-bottom: none;
 }
 
-.booking h3 {
-  color: #eccf77;
+.item figure {
   margin: 0;
-  font-size: 1rem;
+  padding: 0;
+  width: 70%;
+}
+
+.item blockquote {
+  margin: 0;
+  text-align: left;
+  font-size: 1.5rem;
+  color: #212929;
+}
+
+.item p {
+  margin: 0;
+  margin-bottom: 0.25rem;
+}
+
+.item figcaption {
+  font-style: italic;
+  color: #566d6d;
 }

@@ -1,4 +1,5 @@
 import React, {useState, useEffect, useReducer, useContext, useRef} from 'react';
+import { useHistory } from 'react-router-dom';
 
 import Card from '../UI/Card/Card';
 import AuthContext from '../../store/auth-context';
@@ -28,6 +29,7 @@ const passwordReducer = (state, action) => {
 const Login = (props) => {
   
   const [formIsValid, setFormIsValid] = useState(false);
+  const history = useHistory();
 
   const [emailState, dispatchEmail] = useReducer(emailReducer, {
     value: '',
@@ -76,11 +78,15 @@ const Login = (props) => {
 
   const submitHandler = (event) => {
     event.preventDefault();
+
     if (formIsValid) {
       authCtx.onLogin(emailState.value, passwordState.value);
-    } else if (!emailIsValid) {
+      history.push("/bookings");
+    }  
+    else if (!emailIsValid) {
       emailInputRef.current.focus();
-    } else {
+    }
+    else {
       passwordInputRef.current.focus();
     }
   };

@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import classes from './AddPlace.module.css';
 import ErrorModal from '../UI/Error/ErrorModal';
 import Wrapper from '../Helpers/Wrapper';
+import Card from '../UI/Card/Card';
 
 const places = ['Abeerden', 'Aviemore', 'Dundee', 'Edinburgh', 'Glasgow', 'Inverness', 'Fort William', 'Largs', 'Perth', 'Stirling', 'St. Andrews'];
 
@@ -59,35 +60,37 @@ function AddPlace(props) {
                 onConfirm={errorHandler}
               />
         )}
-        <form onSubmit={submitHandler}>
-            <div className={classes.control}>
-              <label htmlFor='location'>Location</label>
-              <select id='location' ref={locationRef}>
-                {places.map((place) => (
-                  <option key={place} value={place}>
-                    {place}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className={classes.control}>
-              <label htmlFor='name'>Name</label>
-              <input type='text' id='name' ref={nameRef} />
-            </div>
-            <div className={classes.control}>
-              <label htmlFor='description'>Description</label>
-              <textarea rows='5' id='description' ref={descriptionRef}></textarea>
-            </div>
-            <div className={classes.control}>
-              <label htmlFor='price'>Price per Night</label>
-              <input type='number' id='price' ref={priceNightRef}/>
-            </div>
-            <div className={classes.control}>
-              <label htmlFor='sites-availables'>Sites Availables</label>
-              <input type='number' id='sites-availables' ref={sitesAvailableRef} defaultValue='0' min='0' step='1'/>
-            </div>
-            <button>Add Place</button>
-        </form>         
+        <Card>
+          <form onSubmit={submitHandler}>
+              <div className={classes.control}>
+                <label htmlFor='location'>Location</label>
+                <select id='location' ref={locationRef}>
+                  {places.map((place) => (
+                    <option key={place} value={place}>
+                      {place}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className={classes.control}>
+                <label htmlFor='name'>Name</label>
+                <input type='text' id='name' ref={nameRef} />
+              </div>
+              <div className={classes.control}>
+                <label htmlFor='description'>Description</label>
+                <textarea rows='5' id='description' ref={descriptionRef}></textarea>
+              </div>
+              <div className={classes.control}>
+                <label htmlFor='price'>Price per Night</label>
+                <input type='number' id='price' ref={priceNightRef}/>
+              </div>
+              <div className={classes.control}>
+                <label htmlFor='sites-availables'>Sites Availables</label>
+                <input type='number' id='sites-availables' ref={sitesAvailableRef} defaultValue='0' min='0' step='1'/>
+              </div>
+              <button>Add Place</button>
+          </form>  
+        </Card>      
       </Wrapper>
     );
   }

@@ -1,8 +1,10 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 
 import classes from './AddBooking.module.css';
 import ErrorModal from '../UI/Error/ErrorModal';
 import Wrapper from '../Helpers/Wrapper';
+import LoadingSpinner from '../../components/UI/Spinner/LoadingSpinner';
+import Card from '../UI/Card/Card';
 
 let today = new Date();
 let dd = String(today.getDate()).padStart(2, '0');
@@ -16,6 +18,9 @@ function AddBooking(props) {
   const [error, setError] = useState();
   const [nights, setNights] = useState(1);
   const [roomsAvailable, setRoomsAvailable] = useState(0);
+  const [locations, setLocations] = useState([]);
+  const [places, setPlaces] = useState(props.places);
+  const [filteredPlaces, setFilteredPlaces] = useState([]);
   
   const locationRef = useRef('');
   const placeRef = useRef('');
@@ -25,6 +30,40 @@ function AddBooking(props) {
   const totalPriceRef = useRef(0);
   const priceRef = useRef(0);
   
+    
+  useEffect(() => {
+    
+    const loadedLocations = [];
+    const loadedPlaces = [];
+    const data = places;
+
+    for (const key in data) {
+        if(data[key].sitesAvailable > 0) {
+          loadedPlaces.push({
+            id: key,
+            location: data[key].location,
+            name: data[key].name,
+            description: data[key].description,
+            price: data[key].price,
+            sitesAvailable: data[key].sitesAvailable
+          });
+        }
+
+        const found = loadedLocations.some(el => el.name === data[key].location);
+        if (!found) {
+          loadedLocations.push({
+            id: key,
+            name: data[key].location,
+          });
+        }        
+    }
+
+    setPlaces(loadedPlaces);
+    setLocations(loadedLocations);      
+
+  }, []);
+
+    
   function submitHandler(event) {
     event.preventDefault();
 
@@ -83,16 +122,11 @@ function AddBooking(props) {
     setError(null);
   };
 
-  const locationHandler = (event) => {
-    props.onFilter(event.target.value);
-  }
-
   const placeHandler = (event) => {
     const findPlace =props.places.filter( (element) => {
       return element.name === event.target.value;
     });
     if(findPlace.length > 0) {
-      console.log(findPlace[0]);
       setRoomsAvailable(findPlace[0].sitesAvailable);
       priceRef.current.value = findPlace[0].price;
       totalPriceRef.current.value  = (findPlace[0].price * nights * quantityRef.current.value);
@@ -138,6 +172,14 @@ function AddBooking(props) {
       totalPriceRef.current.value  = (priceRef.current.value * Difference_In_Days * quantityRef.current.value);  
     }
   }
+  
+  const filterPlaces = (event) => {
+    const filteredPlaces = places.filter( (element) => {
+      return element.location === event.target.value
+    });
+    setFilteredPlaces(filteredPlaces);
+  }
+
 
   return (
     <Wrapper>
@@ -148,51 +190,60 @@ function AddBooking(props) {
               onConfirm={errorHandler}
             />
       )}      
-      <form onSubmit={submitHandler}>
-          <div className={classes.control}>
-            <label htmlFor='location'>Where are you going?</label>
-            <select id='location' ref={locationRef} onChange={locationHandler} defaultValue='0'>
-              <option key='0' value='0'>Choose a Location</option>
-              {props.locations.map((location) => (
-                <option key={location.id} value={location.name} >
-                  {location.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className={classes.control}>
-            <label htmlFor='place'>Places</label>
-            <select id='place' ref={placeRef} onChange={placeHandler} defaultValue='0'>
-              <option key='0' value='0'>Choose a Place</option>
-              {props.places.map((place) => (
-                  <option key={place.id} value={place.name} >
-                    {place.name}
+      <Card>
+        <form onSubmit={submitHandler} className={classes.form}>
+          {props.isLoading && (
+              <div className={classes.loading}>
+                <LoadingSpinner />
+              </div>
+          )}
+            <div className={classes.control}>
+              <label htmlFor='location'>Where are you going?</label>
+              <select id='location' ref={locationRef} onChange={filterPlaces} defaultValue='0'>
+                <option key='0' value='0'>Choose a Location</option>
+                {locations.map((location) => (
+                  <option key={location.id} value={location.name} >
+                    {location.name}
                   </option>
-              ))}
-            </select>
-          </div>
-          <div className={classes.control}>
-            <label htmlFor='start-date'>Check In</label>
-            <input type='date' id='start-date' ref={startDateRef} onChange={startDateHandler}/>
-          </div>
-          <div className={classes.control}>
-            <label htmlFor='end-date'>Check Out</label>
-            <input type='date' id='end-date' ref={endDateRef} onChange={endDateHandler}/>
-          </div>
-          <div className={classes.control}>
-            <label htmlFor='price'>Price/Night</label>
-            <input type='number' id='price' ref={priceRef} readOnly/>
-          </div>
-          <div className={classes.control}>
-            <label htmlFor='quantity'>How many people?</label>
-            <input type='number' id='quantity' ref={quantityRef} onChange={peopleHandler} defaultValue='1' min='1' max='10' step='1'/>
-          </div>          
-          <div className={classes.control}>
-            <label htmlFor='totalPrice'>Total Price</label>
-            <input type='number' id='totalPrice' ref={totalPriceRef} readOnly/>
-          </div>
-          <button>Add Booking</button>
-      </form>      
+                ))}
+              </select>
+            </div>
+            <div className={classes.control}>
+              <label htmlFor='place'>Places</label>
+              <select id='place' ref={placeRef} onChange={placeHandler} defaultValue='0'>
+                <option key='0' value='0'>Choose a Place</option>
+                {filteredPlaces.map((place) => (
+                    <option key={place.id} value={place.name} >
+                      {place.name}
+                    </option>
+                ))}
+              </select>
+            </div>
+            <div className={classes.control}>
+              <label htmlFor='start-date'>Check In</label>
+              <input type='date' id='start-date' ref={startDateRef} onChange={startDateHandler}/>
+            </div>
+            <div className={classes.control}>
+              <label htmlFor='end-date'>Check Out</label>
+              <input type='date' id='end-date' ref={endDateRef} onChange={endDateHandler}/>
+            </div>
+            <div className={classes.control}>
+              <label htmlFor='price'>Price/Night</label>
+              <input type='number' id='price' ref={priceRef} readOnly/>
+            </div>
+            <div className={classes.control}>
+              <label htmlFor='quantity'>How many people?</label>
+              <input type='number' id='quantity' ref={quantityRef} onChange={peopleHandler} defaultValue='1' min='1' max='10' step='1'/>
+            </div>          
+            <div className={classes.control}>
+              <label htmlFor='totalPrice'>Total Price</label>
+              <input type='number' id='totalPrice' ref={totalPriceRef} readOnly/>
+            </div>
+            <div className={classes.actions}>
+              <button className='btn'>Add Booking</button>
+            </div>
+        </form>    
+      </Card>  
     </Wrapper>
   );
 }
